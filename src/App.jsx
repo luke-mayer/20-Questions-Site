@@ -1,8 +1,12 @@
 import {} from "react";
-import "./App.css";
+import Home from "./routes/Home.jsx";
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <Home />
+    </>
+  );
 }
 
 export default App;
