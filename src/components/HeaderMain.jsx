@@ -24,6 +24,9 @@ function HeaderMain() {
         </Button>
       </ChakraLink>
       <Spacer />
+      <Box p="2">
+        <Heading size="md">Luke Mayer</Heading>
+      </Box>
       <ButtonGroup paddingRight="1" gap="2">
         <ChakraLink
           href="https://umd.joinhandshake.com/profiles/50652472"

@@ -200,7 +200,7 @@ const Ask = () => {
 
           setCorrect(is_correct);
           const identify_response = is_correct
-            ? `Congratulations, "${guess}" is correct! You found the word after ${questionNum} questions.`
+            ? `Congratulations, "${guess}" is correct! You found the word after ${questionNum} questions. Return home to play again.`
             : `Sorry, "${guess}" is incorrect. You have ${
                 2 - guessNum
               } guesses remaining`;
@@ -244,39 +244,57 @@ const Ask = () => {
       divider={<StackDivider borderColor="gray.200" />}
     >
       <HeaderMain />
-      <Stack height="100%" align="center" justify="center" spacing={2}>
+      <Stack
+        height="100%"
+        align="center"
+        justify="center"
+        spacing={2}
+        fontSize="lg"
+      >
         {showError ? (
           <Flex>
-            <Text>Error Text</Text>
+            <Text fontSize="lg">Error Text</Text>
           </Flex>
         ) : null}
         {showTable ? null : (
-          <VStack>
+          <VStack fontSize="lg">
             <Text>
-              1. Please ask questions in a yes-or-no format - Failure to do so
-              will forfeit a question.
+              1. Please ask questions in a <b>yes-or-no</b> format - Failure to
+              do so will forfeit a question.
             </Text>
-            <Text>2. The word to guess will be a single, concrete noun.</Text>
-            <Text>3. You have 20 questions and 3 guesses.</Text>
+            <Text>
+              2. The word to guess will be a <b>single, concrete noun</b> (i.e.,
+              an object, a body part, an animal, etc.,).
+            </Text>
+            <Text>
+              3. You can ask up to <b>20 questions</b> and make up to{" "}
+              <b>3 guesses</b>.
+            </Text>
+            <Text color="#3182CE">
+              Note - It can take Abe several seconds of contemplation before he
+              responds. He appreciates your patience.
+            </Text>
             <Text color="teal">Thank you for playing and good luck!</Text>
           </VStack>
         )}
         {showWaking ? (
-          <Text>
+          <Text fontSize="lg">
             Please wait for Abe to wake up. It could take 10 - 15 seconds.
           </Text>
         ) : null}
         {showOutQuestions ? (
-          <Text>You have asked 20 questions. Please make a guess.</Text>
+          <Text fontSize="lg">
+            You have asked 20 questions. Please make a guess.
+          </Text>
         ) : null}
         {outGuesses ? (
-          <Text>
+          <Text fontSize="lg">
             You have used all 3 guesses. Please return home to try again or
             click <q>Show Solution</q> to see the word.
           </Text>
         ) : null}
         {quit ? (
-          <Text>
+          <Text fontSize="lg">
             The word you were trying to guess was <q>{solution}</q>. Please
             return home and try again.
           </Text>
@@ -308,9 +326,13 @@ const Ask = () => {
           </InputRightElement>
         </InputGroup>
         {showGuess ? (
-          <Text color={correct ? "blue" : "red"}>{identifyResponse}</Text>
+          <Text color={correct ? "#3182CE" : "red"}>{identifyResponse}</Text>
         ) : null}
-        {showSendRes ? <Text color="teal">Answer: {sendResponse}</Text> : null}
+        {showSendRes ? (
+          <Text fontSize="lg" color="#3182CE">
+            Answer: {sendResponse}
+          </Text>
+        ) : null}
         {showTable ? <QuestionTable messages={messages} /> : null}
         <HStack>
           <InputGroup size="md" width="300px">
