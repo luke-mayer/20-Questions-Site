@@ -46,12 +46,12 @@ export const endSession = ({ sessionId }) => {
 };
 
 export const startSession = (
-  setShowStart,
   setSessionId,
   setQuestionNum,
   setShowLoading,
   setShowError,
-  setShowWaking
+  setShowWaking,
+  setSolution
 ) => {
   setShowWaking(true);
   console.log("Creating new session");
@@ -67,7 +67,6 @@ export const startSession = (
     },
   };
 
-  setShowStart(false);
   setShowLoading(true);
   console.log("Calling POST %s...", startUrl);
 
@@ -92,12 +91,15 @@ export const startSession = (
         const session_id = data["session_id"];
         const question_num = data["question_number"];
         const abe_response = data["response"];
+        const sol_word = data["word"];
 
         console.log(
           `Received initial response from DuMa for Session ID ${session_id}: "${abe_response}"`
         );
+        console.log(`Solution word: ${sol_word}`); // DELETE UPON DEPLOYMENT
         setSessionId(session_id);
         setQuestionNum(question_num);
+        setSolution(sol_word);
         setShowWaking(false);
         setShowLoading(false);
         // setShowTable(true);

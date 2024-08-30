@@ -20,7 +20,7 @@ function QuestionTable({ messages }) {
   ));
 
   return (
-    <TableContainer overflowY="auto" height="50%" maxWidth="80%">
+    <TableContainer overflowY="auto" maxHeight="40%" maxWidth="80%">
       <Table variant="simple">
         <TableCaption>Previous questions and answers</TableCaption>
         <Thead>

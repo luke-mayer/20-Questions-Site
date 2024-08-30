@@ -1,21 +1,26 @@
 import {
   Button,
+  Flex,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
   Stack,
+  StackDivider,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
-import QuestionTable from "./components/QuestionTable";
+import QuestionTable from "../components/QuestionTable.jsx";
 import { api_host, api_paths } from "../constants";
 import { startSession, endSession } from "../api_calls.jsx";
+import HeaderMain from "../components/HeaderMain.jsx";
 
 const Ask = () => {
-  const [showStart, setShowStart] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [showWaking, setShowWaking] = useState(true);
   const [outQuestions, setOutQuestions] = useState(false);
+  const [outGuesses, setOutGuesses] = useState(false);
   const [showOutQuestions, setShowOutQuestions] = useState(false);
   const [showSendRes, setShowSendRes] = useState(false);
   const [sendResponse, setSendResponse] = useState("");
@@ -28,18 +33,22 @@ const Ask = () => {
   const [showGuess, setShowGuess] = useState(false);
   const [identifyResponse, setIdentifyResponse] = useState("");
   const [questionNum, setQuestionNum] = useState(0);
+  const [guessNum, setGuessNum] = useState(0);
+  const [quit, setQuit] = useState(false);
+  const [solution, setSolution] = useState("");
+  const [correct, setCorrect] = useState(false);
 
   const effectRan = useRef(false); // Remove at DEPLOYMENT
 
   useEffect(() => {
     if (!effectRan.current) {
       startSession(
-        setShowStart,
         setSessionId,
         setQuestionNum,
         setShowLoading,
         setShowError,
-        setShowWaking
+        setShowWaking,
+        setSolution
       );
       return () => {
         // REMOVE AT DEPLOYMENT
@@ -65,9 +74,11 @@ const Ask = () => {
     if (questionNum >= 20) {
       setOutQuestions(true);
       setShowOutQuestions(true);
+      return;
     }
 
     setShowLoading(true);
+    setShowGuess(false);
 
     console.log(`Received user input: "${input}" for session ID ${sessionId}`);
 
@@ -85,7 +96,6 @@ const Ask = () => {
       }),
     };
 
-    setShowGuess(false);
     console.log(`Calling PUT ${iterateUrl}...`);
     try {
       fetch(iterateUrl, iterateOptions)
@@ -110,6 +120,7 @@ const Ask = () => {
           setSendResponse(abe_response);
           const cur_question_num = Number(data["question_number"]);
           setQuestionNum(cur_question_num);
+
           const message = {
             // Compiling question-answer info for table
             q_num: cur_question_num,
@@ -125,6 +136,7 @@ const Ask = () => {
           console.log(
             `Received response from DuMa: "${abe_response}""${cur_question_num}""${input}"`
           );
+
           setMessages((prevMessages) => [message, ...prevMessages]);
           setShowTable(true);
           setShowSendRes(true);
@@ -140,6 +152,13 @@ const Ask = () => {
 
   const handleGuess = () => {
     if (!guess) return;
+
+    if (guessNum >= 3) {
+      setOutGuesses(true);
+      return;
+    }
+
+    setShowLoading(true);
 
     console.log(`Received user guess: "${guess}" for session ID ${sessionId}`);
 
@@ -176,13 +195,27 @@ const Ask = () => {
         })
         .then((data) => {
           console.log(`In identify get abe_response`);
-          const identify_response = data["response"]; // Abe answer
-          console.log(`abe_response: ${identify_response}`);
+          const is_correct = data["response"] === "true"; // Abe answer
+          console.log(`abe_response: ${is_correct}`);
+
+          setCorrect(is_correct);
+          const identify_response = is_correct
+            ? `Congratulations, "${guess}" is correct! You found the word after ${questionNum} questions.`
+            : `Sorry, "${guess}" is incorrect. You have ${
+                2 - guessNum
+              } guesses remaining`;
           setIdentifyResponse(identify_response);
+
+          setGuessNum(guessNum + 1);
+
+          if (guessNum >= 3) {
+            setOutGuesses(true);
+          }
 
           console.log(
             `Received response from DuMa: "${identify_response}""${guess}"`
           );
+
           setShowSendRes(false);
           setShowGuess(true);
           setShowLoading(false);
@@ -191,65 +224,125 @@ const Ask = () => {
       console.error(`Error while sending message to backend: ${error}`);
       setShowError(true);
     } finally {
-      setShowLoading(false);
       setGuess("");
     }
   };
 
+  const handleQuit = (event) => {
+    event.preventDefault();
+    console.log("In handleQuit");
+    const confirmation = window.confirm(
+      "Are you sure? This will end the game."
+    );
+    confirmation ? setQuit(true) : null;
+  };
+
   return (
-    <Stack height="100vh" align="center" justify="center" spacing={2}>
-      {showError ? <Text>Error Text</Text> : null}
-      {showWaking ? (
-        <Text>
-          Please wait for Abe to wake up. It could take 10 - 15 seconds.
-        </Text>
-      ) : null}
-      {showOutQuestions ? (
-        <Text>You have asked 20 questions. Please make a guess.</Text>
-      ) : null}
-      <InputGroup size="md" width="400px">
-        <Input
-          type="text"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={(event) => event.key === "Enter" && handleSend()}
-          placeholder={
-            outQuestions || showLoading
-              ? "Please wait"
-              : "Ask a yes or no question"
-          }
-          disabled={outQuestions || showLoading}
-        />
-        <InputRightElement width="4.5rem">
-          <Button onClick={handleSend} colorScheme="teal" h="1.75rem" size="sm">
-            Ask
+    <Flex
+      h="100vh"
+      direction="column"
+      divider={<StackDivider borderColor="gray.200" />}
+    >
+      <HeaderMain />
+      <Stack height="100%" align="center" justify="center" spacing={2}>
+        {showError ? (
+          <Flex>
+            <Text>Error Text</Text>
+          </Flex>
+        ) : null}
+        {showTable ? null : (
+          <VStack>
+            <Text>
+              1. Please ask questions in a yes-or-no format - Failure to do so
+              will forfeit a question.
+            </Text>
+            <Text>2. The word to guess will be a single, concrete noun.</Text>
+            <Text>3. You have 20 questions and 3 guesses.</Text>
+            <Text color="teal">Thank you for playing and good luck!</Text>
+          </VStack>
+        )}
+        {showWaking ? (
+          <Text>
+            Please wait for Abe to wake up. It could take 10 - 15 seconds.
+          </Text>
+        ) : null}
+        {showOutQuestions ? (
+          <Text>You have asked 20 questions. Please make a guess.</Text>
+        ) : null}
+        {outGuesses ? (
+          <Text>
+            You have used all 3 guesses. Please return home to try again or
+            click <q>Show Solution</q> to see the word.
+          </Text>
+        ) : null}
+        {quit ? (
+          <Text>
+            The word you were trying to guess was <q>{solution}</q>. Please
+            return home and try again.
+          </Text>
+        ) : null}
+        <InputGroup size="md" width="400px">
+          <Input
+            type="text"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={(event) => event.key === "Enter" && handleSend()}
+            placeholder={
+              outQuestions || showLoading || outGuesses || quit || correct
+                ? "Please wait"
+                : "Ask a yes or no question"
+            }
+            disabled={
+              outQuestions || showLoading || outGuesses || quit || correct
+            }
+          />
+          <InputRightElement width="4.5rem">
+            <Button
+              onClick={handleSend}
+              colorScheme="teal"
+              h="1.75rem"
+              size="sm"
+            >
+              Ask
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        {showGuess ? (
+          <Text color={correct ? "blue" : "red"}>{identifyResponse}</Text>
+        ) : null}
+        {showSendRes ? <Text color="teal">Answer: {sendResponse}</Text> : null}
+        {showTable ? <QuestionTable messages={messages} /> : null}
+        <HStack>
+          <InputGroup size="md" width="300px">
+            <Input
+              type="text"
+              value={guess}
+              onChange={(event) => setGuess(event.target.value)}
+              onKeyDown={(event) => event.key === "Enter" && handleGuess()}
+              placeholder={
+                showLoading || outGuesses || quit || correct
+                  ? "Please wait"
+                  : "Guess the word"
+              }
+              disabled={showLoading || outGuesses || quit || correct}
+            />
+            <InputRightElement width="4.5rem">
+              <Button
+                onClick={handleGuess}
+                colorScheme="teal"
+                h="1.75rem"
+                size="sm"
+              >
+                Guess
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          <Button onClick={handleQuit} colorScheme="red" h="1.75rem" size="sm">
+            Show Solution
           </Button>
-        </InputRightElement>
-      </InputGroup>
-      {showGuess ? <Text color="blue">{identifyResponse}</Text> : null}
-      {showSendRes ? <Text color="teal">Answer: {sendResponse}</Text> : null}
-      {showTable ? <QuestionTable messages={messages} /> : null}
-      <InputGroup size="md" width="300px">
-        <Input
-          type="text"
-          value={guess}
-          onChange={(event) => setGuess(event.target.value)}
-          onKeyDown={(event) => event.key === "Enter" && handleGuess()}
-          placeholder={showLoading ? "Please wait" : "Guess the word"}
-          disabled={showLoading}
-        />
-        <InputRightElement width="4.5rem">
-          <Button
-            onClick={handleGuess}
-            colorScheme="teal"
-            h="1.75rem"
-            size="sm"
-          >
-            Guess
-          </Button>
-        </InputRightElement>
-      </InputGroup>
-    </Stack>
+        </HStack>
+      </Stack>
+    </Flex>
   );
 };
 
