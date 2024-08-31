@@ -15,6 +15,7 @@ import QuestionTable from "../components/QuestionTable.jsx";
 import { api_host, api_paths } from "../constants";
 import { startSession, endSession } from "../api_calls.jsx";
 import HeaderMain from "../components/HeaderMain.jsx";
+import ErrorMessage from "../components/ErrorMessage.jsx";
 
 const Ask = () => {
   const [showLoading, setShowLoading] = useState(false);
@@ -244,126 +245,130 @@ const Ask = () => {
       divider={<StackDivider borderColor="gray.200" />}
     >
       <HeaderMain />
-      <Stack
-        height="100%"
-        align="center"
-        justify="center"
-        spacing={2}
-        fontSize="lg"
-      >
-        {showError ? (
-          <Flex>
-            <Text fontSize="lg">Error Text</Text>
-          </Flex>
-        ) : null}
-        {showTable ? null : (
-          <VStack fontSize="lg">
-            <Text>
-              1. Please ask questions in a <b>yes-or-no</b> format - Failure to
-              do so will forfeit a question.
+      {showError ? (
+        <ErrorMessage />
+      ) : (
+        <Stack
+          height="100%"
+          align="center"
+          justify="center"
+          spacing={2}
+          fontSize="lg"
+        >
+          {showTable ? null : (
+            <VStack fontSize="lg">
+              <Text>
+                1. Please ask questions in a <b>yes-or-no</b> format - Failure
+                to do so will forfeit a question.
+              </Text>
+              <Text>
+                2. The word to guess will be a <b>single, concrete noun</b>{" "}
+                (i.e., an object, a body part, an animal, etc.,).
+              </Text>
+              <Text>
+                3. You can ask up to <b>20 questions</b> and make up to{" "}
+                <b>3 guesses</b>.
+              </Text>
+              <Text color="#3182CE">
+                Note - It can take Abe several seconds of contemplation before
+                he responds. He appreciates your patience.
+              </Text>
+              <Text color="teal">Thank you for playing and good luck!</Text>
+            </VStack>
+          )}
+          {showWaking ? (
+            <Text fontSize="lg">
+              Please wait for Abe to wake up. It could take 10 - 15 seconds.
             </Text>
-            <Text>
-              2. The word to guess will be a <b>single, concrete noun</b> (i.e.,
-              an object, a body part, an animal, etc.,).
+          ) : null}
+          {showOutQuestions ? (
+            <Text fontSize="lg">
+              You have asked 20 questions. Please make a guess.
             </Text>
-            <Text>
-              3. You can ask up to <b>20 questions</b> and make up to{" "}
-              <b>3 guesses</b>.
+          ) : null}
+          {outGuesses ? (
+            <Text fontSize="lg">
+              You have used all 3 guesses. Please return home to try again or
+              click <q>Show Solution</q> to see the word.
             </Text>
-            <Text color="#3182CE">
-              Note - It can take Abe several seconds of contemplation before he
-              responds. He appreciates your patience.
+          ) : null}
+          {quit ? (
+            <Text fontSize="lg">
+              The word you were trying to guess was <q>{solution}</q>. Please
+              return home and try again.
             </Text>
-            <Text color="teal">Thank you for playing and good luck!</Text>
-          </VStack>
-        )}
-        {showWaking ? (
-          <Text fontSize="lg">
-            Please wait for Abe to wake up. It could take 10 - 15 seconds.
-          </Text>
-        ) : null}
-        {showOutQuestions ? (
-          <Text fontSize="lg">
-            You have asked 20 questions. Please make a guess.
-          </Text>
-        ) : null}
-        {outGuesses ? (
-          <Text fontSize="lg">
-            You have used all 3 guesses. Please return home to try again or
-            click <q>Show Solution</q> to see the word.
-          </Text>
-        ) : null}
-        {quit ? (
-          <Text fontSize="lg">
-            The word you were trying to guess was <q>{solution}</q>. Please
-            return home and try again.
-          </Text>
-        ) : null}
-        <InputGroup size="md" width="400px">
-          <Input
-            type="text"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            onKeyDown={(event) => event.key === "Enter" && handleSend()}
-            placeholder={
-              outQuestions || showLoading || outGuesses || quit || correct
-                ? "Please wait"
-                : "Ask a yes or no question"
-            }
-            disabled={
-              outQuestions || showLoading || outGuesses || quit || correct
-            }
-          />
-          <InputRightElement width="4.5rem">
-            <Button
-              onClick={handleSend}
-              colorScheme="teal"
-              h="1.75rem"
-              size="sm"
-            >
-              Ask
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-        {showGuess ? (
-          <Text color={correct ? "#3182CE" : "red"}>{identifyResponse}</Text>
-        ) : null}
-        {showSendRes ? (
-          <Text fontSize="lg" color="#3182CE">
-            Answer: {sendResponse}
-          </Text>
-        ) : null}
-        {showTable ? <QuestionTable messages={messages} /> : null}
-        <HStack>
-          <InputGroup size="md" width="300px">
+          ) : null}
+          <InputGroup size="md" width="400px">
             <Input
               type="text"
-              value={guess}
-              onChange={(event) => setGuess(event.target.value)}
-              onKeyDown={(event) => event.key === "Enter" && handleGuess()}
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={(event) => event.key === "Enter" && handleSend()}
               placeholder={
-                showLoading || outGuesses || quit || correct
+                outQuestions || showLoading || outGuesses || quit || correct
                   ? "Please wait"
-                  : "Guess the word"
+                  : "Ask a yes or no question"
               }
-              disabled={showLoading || outGuesses || quit || correct}
+              disabled={
+                outQuestions || showLoading || outGuesses || quit || correct
+              }
             />
             <InputRightElement width="4.5rem">
               <Button
-                onClick={handleGuess}
+                onClick={handleSend}
                 colorScheme="teal"
                 h="1.75rem"
                 size="sm"
               >
-                Guess
+                Ask
               </Button>
             </InputRightElement>
           </InputGroup>
-          <Button onClick={handleQuit} colorScheme="red" h="1.75rem" size="sm">
-            Show Solution
-          </Button>
-        </HStack>
-      </Stack>
+          {showGuess ? (
+            <Text color={correct ? "#3182CE" : "red"}>{identifyResponse}</Text>
+          ) : null}
+          {showSendRes ? (
+            <Text fontSize="lg" color="#3182CE">
+              Answer: {sendResponse}
+            </Text>
+          ) : null}
+          {showTable ? <QuestionTable messages={messages} /> : null}
+          <HStack>
+            <InputGroup size="md" width="300px">
+              <Input
+                type="text"
+                value={guess}
+                onChange={(event) => setGuess(event.target.value)}
+                onKeyDown={(event) => event.key === "Enter" && handleGuess()}
+                placeholder={
+                  showLoading || outGuesses || quit || correct
+                    ? "Please wait"
+                    : "Guess the word"
+                }
+                disabled={showLoading || outGuesses || quit || correct}
+              />
+              <InputRightElement width="4.5rem">
+                <Button
+                  onClick={handleGuess}
+                  colorScheme="teal"
+                  h="1.75rem"
+                  size="sm"
+                >
+                  Guess
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            <Button
+              onClick={handleQuit}
+              colorScheme="red"
+              h="1.75rem"
+              size="sm"
+            >
+              Show Solution
+            </Button>
+          </HStack>
+        </Stack>
+      )}
     </Flex>
   );
 };
