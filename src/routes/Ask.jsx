@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import QuestionTable from "../components/QuestionTable.jsx";
 import { api_host, api_paths } from "../constants";
 import { startSession, endSession } from "../api_calls.jsx";
@@ -39,30 +39,21 @@ const Ask = () => {
   const [solution, setSolution] = useState("");
   const [correct, setCorrect] = useState(false);
 
-  const effectRan = useRef(false); // Remove at DEPLOYMENT
-
   useEffect(() => {
-    if (!effectRan.current) {
-      startSession(
-        setSessionId,
-        setQuestionNum,
-        setShowLoading,
-        setShowError,
-        setShowWaking,
-        setSolution
-      );
-      return () => {
-        // REMOVE AT DEPLOYMENT
-        effectRan.current = true;
-      };
-    } else {
-      window.addEventListener("beforeunload", alertUser);
-      window.addEventListener("unload", endSession({ sessionId }));
-      return () => {
-        window.removeEventListener("beforeunload", alertUser);
-        window.removeEventListener("unload", endSession({ sessionId }));
-      };
-    }
+    startSession(
+      setSessionId,
+      setQuestionNum,
+      setShowLoading,
+      setShowError,
+      setShowWaking,
+      setSolution
+    );
+    window.addEventListener("beforeunload", alertUser);
+    window.addEventListener("unload", endSession({ sessionId }));
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+      window.removeEventListener("unload", endSession({ sessionId }));
+    };
   }, []);
 
   const alertUser = (event) => {
