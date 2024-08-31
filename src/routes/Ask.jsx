@@ -303,7 +303,6 @@ const Ask = () => {
               disabled={
                 outQuestions || showLoading || outGuesses || quit || correct
               }
-              autoFocus={!(showLoading || outQuestions || quit || correct)}
             />
             <InputRightElement width="4.5rem">
               <Button
