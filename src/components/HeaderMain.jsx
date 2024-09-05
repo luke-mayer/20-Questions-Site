@@ -37,7 +37,7 @@ function HeaderMain() {
           </Button>
         </ChakraLink>
         <ChakraLink
-          href="https://www.linkedin.com/in/luke-mayer-b15908310/"
+          href="https://www.linkedin.com/in/luke-mayer316/"
           isExternal
         >
           <Button p="0" colorScheme="teal">
