@@ -12,7 +12,7 @@ export const endSession = ({ sessionId }) => {
       "Content-Type": "application/json",
       session_id: sessionId,
       Accept: "application/json",
-      mock: "false", // TODO: Set to false for real AI integration
+      mock: "false",
     },
   };
 
