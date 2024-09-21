@@ -19,9 +19,6 @@
         <li><a href="#backend">Backend</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -78,6 +75,8 @@ This was developed as a full-stack web application utilizing AWS serverless clou
 - Python (hosted with AWS Lambda)
 - AWS DynamoDB (NoSQL database used to store session data and the object)
 - OpenAI API
+
+![](diagrams\abe-20-questions-diagram-transparent.drawio.png)
 
 ## Contact
 
