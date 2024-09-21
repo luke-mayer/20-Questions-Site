@@ -76,7 +76,7 @@ This was developed as a full-stack web application utilizing AWS serverless clou
 - AWS DynamoDB (NoSQL database used to store session data and the object)
 - OpenAI API
 
-![](diagrams\abe-20-questions-diagram-transparent.drawio.png)
+![](.\diagrams\abe-20-questions-diagram-transparent.drawio.png)
 
 ## Contact
 
