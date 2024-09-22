@@ -26,7 +26,7 @@
 
 ## Overview
 
-Did you know, ChatGPT and other large language models are no good cheats!? At least when it comes
+Did you know, ChatGPT and other large language models are notorious cheats!? At least when it comes
 down to good old-fashioned 20 Questions, the game in which one person thinks of an object and another
 person asks them 20 yes-or-no questions with the goal of being able to deduce what that object is. Well,
 if you play this game with ChatGPT, they will answer your questions and they'll even tell you the object
@@ -41,9 +41,9 @@ Link - [https://abe20questions.com](https://abe20questions.com)
 
 ## How It Works
 
-Abe is powered by OpenAI API, however, there are few key tweaks and additions that allow Abe to do what regular ChatGPT cannot. The main reason that ChatGPT and other LLMs are incapable of fairly playing 20 Questions is that they rely on their conversation history for context. It is basically the only "memory" they have. This means that they aren't able to pick an object and remember it unless they say what it is at the outset of the conversation (which would ruin the whole premise of the game).
+Abe is powered by OpenAI API, however, there are a few key tweaks and additions that allow Abe to do what regular ChatGPT cannot. The main reason that ChatGPT and other LLMs are incapable of fairly playing 20 Questions is that they rely on their conversation history for context. It is basically the only "memory" they have. This means that they aren't able to pick an object and remember it unless they say what it is at the outset of the conversation (which would ruin the whole premise of the game).
 
-In Abe's case, one change is that the OpenAI model does not actually choose the object. Instead, a
+In Abe's case, one change is that the OpenAI model does not actually choose the object. Instead,
 an object is selected from a list of over 500 concrete nouns at random. This allows the object
 to be stored independently of the model. In order to allow Abe to accurately answer yes-or-no
 questions concerning the nature of the object, the noun is told to the model behind the scenes in
@@ -55,8 +55,8 @@ in the independent backend memory as an extra layer of protection to ensure that
 not change the object or tell the user they are correct when they are not in an effort to be
 agreeable.
 
-Prompt engineering is also utilized to instruct the model to never disclose the object, even if the user explicitely asks it to, and to only answer "yes" or "no" to yes-or-no questions. In the case that the user asks questions that are not in the yes-or-no format, the model is instructed to
-correct the user and request that they ask only yes-or-no questions. In this instance, the user would forfiet one of their 20 questions.
+Prompt engineering is also utilized to instruct the model to never disclose the object, even if the user explicitly asks it to, and to only answer "yes" or "no" to yes-or-no questions. In the case that the user asks questions that are not in the yes-or-no format, the model is instructed to
+correct the user and request that they ask only yes-or-no questions. In this instance, the user would forfeit one of their 20 questions.
 
 ## Tech Stack
 
@@ -71,7 +71,7 @@ This was developed as a full-stack web application utilizing AWS serverless clou
 
 ### Back-End
 
-- AWS API Gateway (Restful HTTP API endpoints)
+- AWS API Gateway (RESTful HTTP API endpoints)
 - Python (hosted with AWS Lambda)
 - AWS DynamoDB (NoSQL database used to store session data and the object)
 - OpenAI API
