@@ -34,14 +34,6 @@ function HeaderMain() {
           </Button>
         </ChakraLink>
         <ChakraLink
-          href="https://umd.joinhandshake.com/profiles/50652472"
-          isExternal
-        >
-          <Button p="0" colorScheme="teal">
-            <Icon as={SiHandshake} boxSize={6} />
-          </Button>
-        </ChakraLink>
-        <ChakraLink
           href="https://www.linkedin.com/in/luke-mayer316/"
           isExternal
         >
